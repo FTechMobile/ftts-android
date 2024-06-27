@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 abstract class BaseResponse {
     @SerialName("code")
     var code: Int? = null
-    @SerialName("message")
+    @SerialName("msg")
     var message: String? = null
     open fun isSuccessful(): Boolean = true
 }

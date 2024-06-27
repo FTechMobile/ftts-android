@@ -1,8 +1,17 @@
 # FTTS SDK Android
 
 
-
 ## 1. Install TTS SDK
+In build.gradle add this line
+```java
+maven { url = uri("https://jitpack.io") }
+```
+
+In app/build.gradle add this
+```java
+  implementation 'com.github.FTechMobile:ftts-android:1.0.2'
+```
+
 ## 2. SDK Integration
 #### Initialize SDK
 **java:**

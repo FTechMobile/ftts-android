@@ -6,5 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TTSData(
     @SerialName("audio_url")
-    var audioUrl: String? = null
+    var audioUrl: String? = null,
+    @SerialName("audio_urls")
+    var listAudioUrl: List<String>? = null
 )

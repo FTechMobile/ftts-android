@@ -20,10 +20,12 @@ import ai.ftech.fttssdk.utils.DataStoreConstant
 import android.app.Application
 import android.content.Context
 import android.media.MediaPlayer
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.io.File
 
 object TTSManager {
     private val TAG: String = TTSManager::class.java.simpleName
@@ -31,9 +33,9 @@ object TTSManager {
     private var gateWayRemote: GatewayRemoteDataSource? = null
     private var ttsRemote: TTSRemoteDataSource? = null
     private var dataStore: IDataStore? = null
-    private var sttCallback: ISTTCallback? = null
+    private var sttCallback: ITTSCallback? = null
     private var player: MediaPlayer? = null
-    private var audioUrl:String?=null
+    private var audioUrl: String? = null
 
 
     @JvmStatic
@@ -121,7 +123,7 @@ object TTSManager {
     }
 
     @JvmStatic
-    fun registerTTSCallback(sttCallback: ISTTCallback) {
+    fun registerTTSCallback(sttCallback: ITTSCallback) {
         this.sttCallback = sttCallback
     }
 
@@ -161,10 +163,55 @@ object TTSManager {
                             audioUrl = result.data?.data?.audioUrl
                             if (isAutoPlayAudio) {
                                 startPlaying()
-                            }else{
+                            } else {
                                 sttCallback?.onSuccess(audioUrl.getString())
                             }
 
+                        }
+
+                        is BaseCallBack.Error -> {
+                            sttCallback?.onFail(result.error)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @JvmStatic
+    fun startTTS(language: String, voice: String, file: File) {
+        startTTS(language, voice, file.absolutePath)
+    }
+
+    @JvmStatic
+    fun startTTS(language: String, voice: String, absoluteFilePath: String) {
+        if (isNotInitGateway()) {
+            sttCallback?.onFail(AppException(getAppString(R.string.message_recorder_not_initial)))
+            return
+        }
+
+        if (language.isEmpty()) {
+            sttCallback?.onFail(AppException(getAppString(R.string.message_language_empty)))
+            return
+        }
+
+        if (voice.isEmpty()) {
+            sttCallback?.onFail(AppException(getAppString(R.string.message_voice_empty)))
+            return
+        }
+
+        sttCallback?.onStart()
+
+        val request = TTSRequest().apply {
+            this.language = language
+            this.voice = voice
+        }
+        ttsRemote?.let { remote ->
+            CoroutineScope(Dispatchers.IO).launch {
+                remote.tts(request, absoluteFilePath).collect { result ->
+                    when (result) {
+                        is BaseCallBack.Success -> {
+                            sttCallback?.onFileSuccess(result.data?.data?.listAudioUrl ?: listOf())
                         }
 
                         is BaseCallBack.Error -> {

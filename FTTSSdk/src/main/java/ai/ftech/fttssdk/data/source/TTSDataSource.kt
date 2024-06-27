@@ -8,5 +8,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface TTSDataSource {
     fun tts(request: TTSRequest): Flow<BaseCallBack<TTSResponse>>
+    fun tts(request: TTSRequest, filePath: String): Flow<BaseCallBack<TTSResponse>>
     fun getLanguageConfig(): Flow<BaseCallBack<LanguageConfigResponse>>
 }
