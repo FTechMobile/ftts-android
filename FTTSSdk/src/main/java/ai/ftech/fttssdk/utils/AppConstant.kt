@@ -1,8 +1,8 @@
 package ai.ftech.fttssdk.utils
 
 object AppConstant {
-    const val BASE_GATE_WAY_URL = "https://fcloud-api-gateway.dev.ftech.ai/"
-    const val BASE_TTS_URL = "https://fcloud-tts.dev.ftech.ai/"
+    const val BASE_GATE_WAY_URL = "https://fcloud-api-gateway.ftech.ai/"
+    const val BASE_TTS_URL = "https://fcloud-tts.prod.ftech.ai/"
     const val TIMEOUT = 30000L
     const val HEADER_ACCEPT = "accept"
     const val HEADER_CONTENT_TYPE = "content-type"
